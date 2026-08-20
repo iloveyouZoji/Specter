@@ -3,10 +3,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-// ─────────────────────────────────────────────
-//  Hashing - djb2 variant, compile-time friendly
-// ─────────────────────────────────────────────
-
 constexpr uint32_t SPECTER_SEED = 0x1337CAFE;
 
 inline uint32_t specter_hash(const char* str) {
@@ -26,10 +22,6 @@ constexpr uint32_t HASH_CreateThread       = specter_hash("CreateThread");
 constexpr uint32_t HASH_OpenProcess        = specter_hash("OpenProcess");
 constexpr uint32_t HASH_WriteProcessMemory = specter_hash("WriteProcessMemory");
 constexpr uint32_t HASH_CloseHandle        = specter_hash("CloseHandle");
-
-// ─────────────────────────────────────────────
-//  PEB walking to get module base
-// ─────────────────────────────────────────────
 
 inline HMODULE specter_get_module_base(uint32_t module_hash) {
 #ifdef _WIN64
@@ -76,10 +68,6 @@ inline HMODULE specter_get_module_base(uint32_t module_hash) {
     return nullptr;
 }
 
-// ─────────────────────────────────────────────
-//  Export table walking to resolve function
-// ─────────────────────────────────────────────
-
 inline void* specter_resolve(HMODULE base, uint32_t func_hash) {
     if (!base) return nullptr;
 
@@ -110,10 +98,6 @@ inline void* specter_resolve(HMODULE base, uint32_t func_hash) {
     return nullptr;
 }
 
-// ─────────────────────────────────────────────
-//  Specter context - resolved function table
-// ─────────────────────────────────────────────
-
 struct SpecterCtx {
     // Typedefs
     using fn_LoadLibraryA       = HMODULE  (WINAPI*)(LPCSTR);
@@ -139,10 +123,6 @@ struct SpecterCtx {
 
     bool ready = false;
 };
-
-// ─────────────────────────────────────────────
-//  Initialization
-// ─────────────────────────────────────────────
 
 static SpecterCtx g_specter;
 
@@ -172,17 +152,9 @@ bool specter_init() {
     return true;
 }
 
-// ─────────────────────────────────────────────
-//  Convenience accessor (post-init calls)
-// ─────────────────────────────────────────────
-
 inline SpecterCtx& specter() {
     return g_specter;
 }
-
-// ─────────────────────────────────────────────
-//  Demo main
-// ─────────────────────────────────────────────
 
 int main() {
     if (!specter_init()) {
