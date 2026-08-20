@@ -1,6 +1,3 @@
-// Specter - Dynamic API Resolution Framework
-// Runtime function lookup via PEB/module walking
-
 #include <windows.h>
 #include <winternl.h>
 #include <stdint.h>
